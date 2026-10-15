@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Working notes: how the homelab is built — Tim Lam</title>
+<meta name="description" content="How Tim Lam's homelab platform is built and run: Proxmox VE, unprivileged LXC, single-node k3s, Cloudflare Tunnels, a systemd deploy watcher and a read-only live status feed.">
+<meta property="og:title" content="Working notes: how the homelab is built">
+<meta property="og:description" content="Proxmox VE, unprivileged LXC, single-node k3s, Cloudflare Tunnels, a systemd deploy watcher and a read-only status feed, with the trade-offs.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://portfolio.timbacloudpanel.org/homelab.html">
+<meta name="theme-color" content="#c3ccbd">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/panel.css">
+<script src="/assets/panel.js" defer></script>
+</head>
+<body data-page="notes">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="wrap topbar">
+  <a class="home-link" href="/"><span class="plate">Tim Lam</span></a>
+  <nav aria-label="Site">
+    <a href="/">Panel</a>
+    <a href="/homelab.html" aria-current="page">Working notes</a>
+    <a href="https://github.com/Soratica">GitHub</a>
+  </nav>
+</header>
+
+<main id="main">
+<div class="wrap page-head">
+  <p class="status-line" data-stn="k3s-learn" data-state="nodata"><span class="lamp"></span><span>k3s-learn: <span data-ind>No reading</span></span></p>
+  <h1>Working notes</h1>
+  <p class="lede">How the platform behind the panel is built, why it's built that way, and what I'd change. Everything here is running now, and the lamps on the panel read from it.</p>
+</div>
+
+<div class="wrap notes-layout">
+  <nav class="toc" aria-label="On this page">
+    <span class="plate plate--bare">Contents</span>
+    <ol>
+      <li><a href="#host">Host layer</a></li>
+      <li><a href="#cluster">The cluster</a></li>
+      <li><a href="#ingress">Getting traffic in</a></li>
+      <li><a href="#deploy-line">The deploy line</a></li>
+      <li><a href="#status-feed">The status feed</a></li>
+      <li><a href="#capacity">Capacity</a></li>
+      <li><a href="#tradeoffs">Trade-offs</a></li>
+    </ol>
+  </nav>
+
+  <article class="prose">
+    <h2 id="host">Host layer</h2>
+    <p>Everything runs on one physical machine running <strong>Proxmox VE</strong>. Workloads live in <strong>LXC containers</strong> rather than full VMs: they share the host kernel, so they start in seconds and leave more of the machine's memory for the work itself.</p>
+    <p>Two containers carry what you see on the panel:</p>
+    <ul>
+      <li><strong>LXC 100, docker-ct.</strong> Docker plus build tooling. Every image on the panel is built here.</li>
+      <li><strong>LXC 102, k3s-learn.</strong> A Debian 12 container running a single-node k3s cluster. It has no build tooling at all; it only runs images.</li>
+    </ul>
+    <p>Both are <strong>unprivileged</strong>: root inside the container maps to an unprivileged UID range on the host, so a process that escapes a container lands on the host as an unprivileged user. That's the default I start from, and the reason file ownership on bind mounts needs a little care.</p>
+    <p>After one host reboot, both containers stayed down because neither was set to start on boot. I turned on <code>onboot</code> for both, and the deploy watcher now waits two minutes after boot before its first run so the containers are up when it reaches for them.</p>
+
+    <h2 id="cluster">The cluster</h2>
+    <p>k3s gives me a real Kubernetes API in a small footprint. The cluster runs:</p>
+    <ul>
+      <li><strong>Traefik</strong> as the ingress controller, routing by hostname to each app's Service.</li>
+      <li><strong>local-path</strong> as the default StorageClass, binding volumes on the node when a pod first needs them.</li>
+      <li><strong>kube-prometheus-stack</strong> (Prometheus, Grafana, Alertmanager) in a <code>monitoring</code> namespace.</li>
+    </ul>
+    <p>Each app gets its own namespace, with credentials held in Kubernetes Secrets rather than in images or repos.</p>
+    <h3>No registry, on purpose (for now)</h3>
+    <p>There's no image registry. Images are built in docker-ct, saved to a tarball, streamed straight into the k3s container through <code>pct exec</code> on the host, and imported into containerd with <code>k3s ctr images import</code>. Deployments use <code>imagePullPolicy: Never</code>, so the cluster only ever runs what was imported.</p>
+    <p>The catch: <code>kubectl rollout restart</code> on its own changes nothing. A new image has to be built and imported first. The deploy line handles that, so I don't have to remember.</p>
+    <h3>One stateful detail worth mentioning</h3>
+    <p>Gym Hero needs multi-document transactions, which MongoDB only supports on a replica set. It runs as a single-member replica set with a keyfile from a Secret. After initialising it, I had to reconfigure the member's advertised host to the Service name, because pod hostnames don't resolve inside the cluster and the driver failed with <code>ENOTFOUND</code> until I did.</p>
+
+    <h2 id="ingress">Getting traffic in</h2>
+    <p>Nothing on the panel is reached through an open port. A <strong>Cloudflare Tunnel</strong> runs as a <code>cloudflared</code> Deployment in its own namespace. It dials <em>out</em> to Cloudflare's edge, and requests for this site and the apps come back down that connection to Traefik.</p>
+    <p>That's the route the panel lights up when it loads: your browser, the Cloudflare edge location that answered you, the tunnel, Traefik, then the portfolio pod that served the page. The edge code and pod name on the panel come from your actual request.</p>
+    <p>Each Ingress carries two host rules, the public hostname and a <code>.local</code> name, so the apps stay reachable on the LAN by name even if the tunnel is down.</p>
+    <p>One lesson: a public hostname added in the Cloudflare dashboard can fail to save while the tunnel still shows as connected, which leaves the name not resolving. I now check every new hostname against a public resolver before calling it done.</p>
+
+    <h2 id="deploy-line">The deploy line</h2>
+    <p>Pushing to GitHub is the whole deploy. A <strong>systemd timer</strong> on the Proxmox host runs a watcher script every five minutes. It lives on the host because that's the one place that can reach into both containers.</p>
+    <ol>
+      <li><strong>Fetch.</strong> For each watched repo, <code>git fetch</code> inside docker-ct and compare <code>HEAD</code> with the remote branch.</li>
+      <li><strong>Fast-forward only.</strong> If it's behind, merge with <code>--ff-only</code>. Anything that isn't a clean fast-forward is logged and left alone rather than forced.</li>
+      <li><strong>Build</strong> the image in docker-ct.</li>
+      <li><strong>Ship</strong> it: <code>docker save</code>, stream it through the host into k3s-learn, <code>ctr images import</code>.</li>
+      <li><strong>Roll out:</strong> <code>kubectl rollout restart</code>, then <code>rollout status</code> with a timeout, so a bad rollout shows up in the journal instead of passing silently.</li>
+      <li><strong>Record</strong> the deploy in the register you can see on the panel.</li>
+    </ol>
+    <p>The run is guarded by <code>flock</code>, so a slow build can't overlap with the next timer tick. Gym Hero, Music Shuffler and this portfolio are on the line. Job Planner is still deployed by hand.</p>
+
+    <h2 id="status-feed">The status feed</h2>
+    <p>The lamps needed live data without opening a new way into the cluster. So nothing in your browser ever talks to the Kubernetes API.</p>
+    <ul>
+      <li>A <strong>CronJob</strong> runs every minute under its own ServiceAccount. Its permissions are read-only and scoped: <code>get</code> and <code>list</code> on Deployments and StatefulSets in the namespaces shown on the panel, <code>get</code> on nodes, and permission to update exactly one ConfigMap.</li>
+      <li>It writes an <strong>allow-listed</strong> summary: per station, ready replicas, desired replicas, a derived state and the last rollout time. Anything not on the list never leaves the cluster.</li>
+      <li>The deploy watcher publishes the host readings and the register the same way, into a second ConfigMap.</li>
+      <li>Both ConfigMaps are mounted into this site's nginx pod as plain files under <code>/status/</code>. There's no new listener and no proxy, and the feed is served with <code>no-store</code> so readings are never cached.</li>
+    </ul>
+    <p>If the feed stops updating, the panel says so: readings older than five minutes go dark rather than showing an old green.</p>
+
+    <h2 id="capacity">Capacity</h2>
+    <p>The host's memory is shared between every container on it, and each container has a fixed memory allocation rather than an unbounded share. The monitoring stack is currently scaled to zero replicas, and the panel shows it as <strong>switched out</strong> rather than hiding it. Switching it back in is a replica count, not a reinstall.</p>
+
+    <h2 id="tradeoffs">Trade-offs I'd revisit</h2>
+    <dl class="tradeoff">
+      <dt>Single node, single host</dt>
+      <dd>There's no high availability. A host reboot takes everything down until the containers start again. Fine for a lab; the next step would be a second node, plus storage that isn't tied to one disk.</dd>
+      <dt>No registry, <code>:latest</code> tags</dt>
+      <dd>Simple, but it couples the build container to the cluster and makes rollbacks manual. I'd add a small in-cluster registry and tag images with the commit SHA, so a rollback is a one-line change.</dd>
+      <dt>Polling instead of webhooks</dt>
+      <dd>Polling needs no inbound path for GitHub to call, which suits a tunnel-only setup. The price is up to five minutes between push and deploy.</dd>
+      <dt>Manifests applied by hand</dt>
+      <dd>Most manifests were applied ad hoc with <code>kubectl apply</code>. This portfolio's manifests now live in its repo. The other apps are next, and that's the step before trying a GitOps controller.</dd>
+    </dl>
+  </article>
+</div>
+
+<section class="band band--cabinet" aria-labelledby="close-h">
+  <div class="wrap close">
+    <div>
+      <h2 id="close-h">Questions about any of this?</h2>
+      <p>I'm looking for cloud, infrastructure and systems administration roles, and I'm happy to go deeper on any decision here.</p>
+    </div>
+    <ul class="buttons" aria-label="Contact">
+      <li hidden><a class="push push--primary" href="/assets/tim-lam-resume.pdf" hidden><span class="cap"></span><span class="plate">Resume</span></a></li>
+      <li hidden><a class="push" href="mailto:" hidden><span class="cap"></span><span class="plate">Email</span></a></li>
+      <li hidden><a class="push" href="https://www.linkedin.com/in/" hidden><span class="cap"></span><span class="plate">LinkedIn</span></a></li>
+      <li><a class="push push--primary" href="/"><span class="cap"></span><span class="plate">Back to panel</span></a></li>
+      <li><a class="push" href="https://github.com/Soratica"><span class="cap"></span><span class="plate">GitHub</span></a></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Served to you by pod <strong data-pod>—</strong> on k3s-learn</span>
+    <span>Built and run by Tim Lam · <a href="https://github.com/Soratica/portfolio-site">Source</a></span>
+  </div>
+</footer>
+</body>
+</html>

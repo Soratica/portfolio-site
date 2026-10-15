@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Music Shuffler — Tim Lam</title>
+<meta name="description" content="A small Flask app that pulls a random track from a curated YouTube playlist and shows it with a shuffle animation: a quick way to find something new to listen to.">
+<meta property="og:title" content="Music Shuffler — Tim Lam">
+<meta property="og:description" content="A small Flask app that pulls a random track from a curated YouTube playlist and shows it with a shuffle animation: a quick way to find something new to listen to.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://portfolio.timbacloudpanel.org/projects/music.html">
+<meta name="theme-color" content="#c3ccbd">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/panel.css">
+<script src="/assets/panel.js" defer></script>
+</head>
+<body data-page="station">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="wrap topbar">
+  <a class="home-link" href="/"><span class="plate">Tim Lam</span></a>
+  <nav aria-label="Site">
+    <a href="/">Panel</a>
+    <a href="/homelab.html">Working notes</a>
+    <a href="https://github.com/Soratica">GitHub</a>
+  </nav>
+</header>
+
+<main id="main">
+<div class="wrap page-head" data-stn="music" data-state="nodata">
+  <p class="status-line"><span class="lamp"></span><span>Station Music Shuffler: <span data-ind>No reading</span> · <span data-ready>—</span> ready</span></p>
+  <h1>Music Shuffler</h1>
+  <p class="lede">A small Flask app that pulls a random track from a curated YouTube playlist and shows it with a shuffle animation: a quick way to find something new to listen to.</p>
+  <ul class="buttons" aria-label="Open Music Shuffler">
+    <li><a class="push push--primary" href="https://music.timbacloudpanel.org"><span class="cap"></span><span class="plate">Live demo</span></a></li>
+    <li><a class="push" href="https://github.com/Soratica/pythonyoutubeapp"><span class="cap"></span><span class="plate">Source</span></a></li>
+  </ul>
+</div>
+
+<div class="wrap station-body">
+  <article class="prose">
+    <h2>Stack</h2>
+    <p>Flask with the app-factory pattern, server-rendered Jinja templates, and Google's YouTube Data API v3 for playlist data.</p>
+    <h2>Running it</h2>
+    <p>One gunicorn-served pod. The YouTube API key, playlist ID and Flask secret key are held in a Kubernetes Secret and injected as environment variables, so none of them live in the image or the repo.</p>
+    <h2 id="operated">How it's deployed and operated</h2>
+    <ol class="path" aria-label="Deploy path">
+      <li><b>Commit</b>pushed to GitHub</li>
+      <li><b>Watcher</b>systemd timer fetches, fast-forward only</li>
+      <li><b>Build</b>docker build in LXC 100</li>
+      <li><b>Ship</b>image streamed into LXC 102, ctr import</li>
+      <li><b>Roll out</b>rollout restart + rollout status</li>
+    </ol>
+    <p class="path-note">Auto-deployed: a commit to <code>master</code> is live within about five minutes, and shows up in the panel's register.</p>
+  </article>
+  <aside class="station-side" aria-label="Live readings">
+    <span class="plate plate--bare">Readings</span>
+    <dl class="readings-mini" data-stn="music" data-state="nodata">
+      <div><dt>Indication</dt><dd><span data-ind>No reading</span></dd></div>
+      <div><dt>Ready</dt><dd data-ready>—</dd></div>
+      <div><dt>Last rollout</dt><dd data-rollout>—</dd></div>
+      <div><dt>Namespace</dt><dd>music</dd></div>
+    </dl>
+    <dl class="facts-grid">
+      <div><dt>Runtime</dt><dd>Python, gunicorn</dd></div>
+      <div><dt>External API</dt><dd>YouTube Data API v3</dd></div>
+      <div><dt>Secrets</dt><dd>Kubernetes Secret, env vars</dd></div>
+      <div><dt>Ingress</dt><dd>Traefik, via Cloudflare Tunnel</dd></div>
+    </dl>
+  </aside>
+</div>
+
+<section class="band band--cabinet" aria-labelledby="close-h">
+  <div class="wrap close">
+    <div>
+      <h2 id="close-h">Hiring for cloud, infrastructure or sysadmin?</h2>
+      <p>I built and run every layer under this app. I'd be glad to walk you through it.</p>
+    </div>
+    <ul class="buttons" aria-label="Contact">
+      <li hidden><a class="push push--primary" href="/assets/tim-lam-resume.pdf" hidden><span class="cap"></span><span class="plate">Resume</span></a></li>
+      <li hidden><a class="push" href="mailto:" hidden><span class="cap"></span><span class="plate">Email</span></a></li>
+      <li hidden><a class="push" href="https://www.linkedin.com/in/" hidden><span class="cap"></span><span class="plate">LinkedIn</span></a></li>
+      <li><a class="push push--primary" href="/projects/job-planner.html"><span class="cap"></span><span class="plate">Next station</span></a></li>
+      <li><a class="push" href="https://github.com/Soratica"><span class="cap"></span><span class="plate">GitHub</span></a></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Served to you by pod <strong data-pod>—</strong> on k3s-learn</span>
+    <span>Built and run by Tim Lam · <a href="https://github.com/Soratica/portfolio-site">Source</a></span>
+  </div>
+</footer>
+</body>
+</html>

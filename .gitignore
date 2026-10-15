@@ -1,0 +1,4 @@
+# Design-tooling context stays local (it references private homelab details).
+PRODUCT.md
+DESIGN.md
+.impeccable/

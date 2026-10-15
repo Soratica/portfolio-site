@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gym Hero — Tim Lam</title>
+<meta name="description" content="An RPG-themed workout tracker. Logging a real workout levels up a character across four stats, with quests, loot, streaks and personal records framed as boss battles.">
+<meta property="og:title" content="Gym Hero — Tim Lam">
+<meta property="og:description" content="An RPG-themed workout tracker. Logging a real workout levels up a character across four stats, with quests, loot, streaks and personal records framed as boss battles.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://portfolio.timbacloudpanel.org/projects/gymhero.html">
+<meta name="theme-color" content="#c3ccbd">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/panel.css">
+<script src="/assets/panel.js" defer></script>
+</head>
+<body data-page="station">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="wrap topbar">
+  <a class="home-link" href="/"><span class="plate">Tim Lam</span></a>
+  <nav aria-label="Site">
+    <a href="/">Panel</a>
+    <a href="/homelab.html">Working notes</a>
+    <a href="https://github.com/Soratica">GitHub</a>
+  </nav>
+</header>
+
+<main id="main">
+<div class="wrap page-head" data-stn="gymhero" data-state="nodata">
+  <p class="status-line"><span class="lamp"></span><span>Station Gym Hero: <span data-ind>No reading</span> · <span data-ready>—</span> ready</span></p>
+  <h1>Gym Hero</h1>
+  <p class="lede">An RPG-themed workout tracker. Logging a real workout levels up a character across four stats, with quests, loot, streaks and personal records framed as boss battles.</p>
+  <ul class="buttons" aria-label="Open Gym Hero">
+    <li><a class="push push--primary" href="https://gymhero.timbacloudpanel.org"><span class="cap"></span><span class="plate">Live demo</span></a></li>
+    <li><a class="push" href="https://github.com/Soratica/Gym-Hero"><span class="cap"></span><span class="plate">Source</span></a></li>
+  </ul>
+</div>
+
+<div class="wrap station-body">
+  <article class="prose">
+    <h2>How it works</h2>
+    <p>Every logged set feeds XP into the stat its exercise trains: a barbell squat trains Strength, a run trains Endurance, and so on. Stats level independently on an escalating XP curve, and the overall character level rewards balanced training over maxing one stat. A new personal record triggers a boss-battle moment. Daily and weekly quests and a workout streak earn bonus XP and random loot.</p>
+    <h2>Stack</h2>
+    <p>Next.js (App Router) with TypeScript end to end, MongoDB with Mongoose, and Auth.js for real account authentication. The whole workout submission (XP, level-ups, PR detection, streaks, quest progress and loot rolls) runs through one transactional service, so a submission either fully lands or doesn't land at all.</p>
+    <h2>Why the database is a replica set</h2>
+    <p>MongoDB only supports multi-document transactions on a replica set, so the in-cluster database runs as a single-member replica set with a keyfile from a Kubernetes Secret. The member's advertised host is reconfigured to the Service name, because pod hostnames don't resolve inside the cluster.</p>
+    <h2 id="operated">How it's deployed and operated</h2>
+    <ol class="path" aria-label="Deploy path">
+      <li><b>Commit</b>pushed to GitHub</li>
+      <li><b>Watcher</b>systemd timer fetches, fast-forward only</li>
+      <li><b>Build</b>docker build in LXC 100</li>
+      <li><b>Ship</b>image streamed into LXC 102, ctr import</li>
+      <li><b>Roll out</b>rollout restart + rollout status</li>
+    </ol>
+    <p class="path-note">Auto-deployed: a commit to <code>main</code> is live within about five minutes, and shows up in the panel's register.</p>
+  </article>
+  <aside class="station-side" aria-label="Live readings">
+    <span class="plate plate--bare">Readings</span>
+    <dl class="readings-mini" data-stn="gymhero" data-state="nodata">
+      <div><dt>Indication</dt><dd><span data-ind>No reading</span></dd></div>
+      <div><dt>Ready</dt><dd data-ready>—</dd></div>
+      <div><dt>Last rollout</dt><dd data-rollout>—</dd></div>
+      <div><dt>Namespace</dt><dd>gymhero</dd></div>
+    </dl>
+    <dl class="facts-grid">
+      <div><dt>Runtime</dt><dd>Next.js standalone build</dd></div>
+      <div><dt>Data</dt><dd>MongoDB 7, replica set rs0</dd></div>
+      <div><dt>Secrets</dt><dd>Kubernetes Secrets</dd></div>
+      <div><dt>Ingress</dt><dd>Traefik, via Cloudflare Tunnel</dd></div>
+    </dl>
+  </aside>
+</div>
+
+<section class="band band--cabinet" aria-labelledby="close-h">
+  <div class="wrap close">
+    <div>
+      <h2 id="close-h">Hiring for cloud, infrastructure or sysadmin?</h2>
+      <p>I built and run every layer under this app. I'd be glad to walk you through it.</p>
+    </div>
+    <ul class="buttons" aria-label="Contact">
+      <li hidden><a class="push push--primary" href="/assets/tim-lam-resume.pdf" hidden><span class="cap"></span><span class="plate">Resume</span></a></li>
+      <li hidden><a class="push" href="mailto:" hidden><span class="cap"></span><span class="plate">Email</span></a></li>
+      <li hidden><a class="push" href="https://www.linkedin.com/in/" hidden><span class="cap"></span><span class="plate">LinkedIn</span></a></li>
+      <li><a class="push push--primary" href="/projects/music.html"><span class="cap"></span><span class="plate">Next station</span></a></li>
+      <li><a class="push" href="https://github.com/Soratica"><span class="cap"></span><span class="plate">GitHub</span></a></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Served to you by pod <strong data-pod>—</strong> on k3s-learn</span>
+    <span>Built and run by Tim Lam · <a href="https://github.com/Soratica/portfolio-site">Source</a></span>
+  </div>
+</footer>
+</body>
+</html>

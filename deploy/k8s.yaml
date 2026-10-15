@@ -1,0 +1,436 @@
+# portfolio-site: the panel, its live status feed, and least-privilege RBAC.
+# Apply with: kubectl apply -f deploy/k8s.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: portfolio
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio-site
+  namespace: portfolio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portfolio-site
+  template:
+    metadata:
+      labels:
+        app: portfolio-site
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: portfolio-site
+          image: docker.io/library/portfolio-site:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet: { path: /, port: 80 }
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /, port: 80 }
+            periodSeconds: 30
+          resources:
+            requests: { cpu: 10m, memory: 16Mi }
+            limits: { memory: 64Mi }
+          volumeMounts:
+            - name: status
+              mountPath: /usr/share/nginx/html/status
+              readOnly: true
+      volumes:
+        - name: status
+          projected:
+            sources:
+              - configMap: { name: portfolio-status, optional: true }
+              - configMap: { name: portfolio-host, optional: true }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: portfolio-site
+  namespace: portfolio
+spec:
+  selector:
+    app: portfolio-site
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: portfolio-site
+  namespace: portfolio
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: portfolio.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio-site
+                port:
+                  number: 80
+    - host: portfolio.timbacloudpanel.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio-site
+                port:
+                  number: 80
+---
+# Data is written at runtime (status CronJob); apply never touches it.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portfolio-status
+  namespace: portfolio
+---
+# Data is written at runtime (deploy watcher on the Proxmox host); apply never touches it.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portfolio-host
+  namespace: portfolio
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: portfolio-status
+  namespace: portfolio
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: portfolio-status-reader
+  namespace: portfolio
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["portfolio-site"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["portfolio-status"]
+    verbs: ["get", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: portfolio-status-reader
+  namespace: portfolio
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: portfolio-status-reader
+subjects:
+  - kind: ServiceAccount
+    name: portfolio-status
+    namespace: portfolio
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: portfolio-status-reader
+  namespace: gymhero
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["gymhero-app", "mongodb"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: portfolio-status-reader
+  namespace: gymhero
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: portfolio-status-reader
+subjects:
+  - kind: ServiceAccount
+    name: portfolio-status
+    namespace: portfolio
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: portfolio-status-reader
+  namespace: music
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["music-app"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: portfolio-status-reader
+  namespace: music
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: portfolio-status-reader
+subjects:
+  - kind: ServiceAccount
+    name: portfolio-status
+    namespace: portfolio
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: portfolio-status-reader
+  namespace: job-planner
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["job-planner", "job-planner-api"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: portfolio-status-reader
+  namespace: job-planner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: portfolio-status-reader
+subjects:
+  - kind: ServiceAccount
+    name: portfolio-status
+    namespace: portfolio
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: portfolio-status-reader
+  namespace: cloudflared
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["cloudflared"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: portfolio-status-reader
+  namespace: cloudflared
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: portfolio-status-reader
+subjects:
+  - kind: ServiceAccount
+    name: portfolio-status
+    namespace: portfolio
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: portfolio-status-reader
+  namespace: kube-system
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["traefik"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: portfolio-status-reader
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: portfolio-status-reader
+subjects:
+  - kind: ServiceAccount
+    name: portfolio-status
+    namespace: portfolio
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: portfolio-status-reader
+  namespace: monitoring
+rules:
+  - apiGroups: ["apps"]
+    resources: ["statefulsets"]
+    resourceNames: ["prometheus-kube-prometheus-stack-prometheus"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: portfolio-status-reader
+  namespace: monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: portfolio-status-reader
+subjects:
+  - kind: ServiceAccount
+    name: portfolio-status
+    namespace: portfolio
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: portfolio-status-node-reader
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    resourceNames: ["k3s-learn"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: portfolio-status-node-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: portfolio-status-node-reader
+subjects:
+  - kind: ServiceAccount
+    name: portfolio-status
+    namespace: portfolio
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portfolio-status-script
+  namespace: portfolio
+data:
+  collect-status.sh: |
+    #!/bin/sh
+    # Writes an allow-listed summary of the panel's stations into the
+    # portfolio-status ConfigMap. Runs every minute as a CronJob with read-only,
+    # per-object RBAC. Anything not listed here never leaves the cluster.
+    set -eu
+
+    STATIONS="
+    portfolio       portfolio    deployment  portfolio-site
+    gymhero         gymhero      deployment  gymhero-app
+    gymhero-db      gymhero      deployment  mongodb
+    music           music        deployment  music-app
+    job-planner     job-planner  deployment  job-planner
+    job-planner-api job-planner  deployment  job-planner-api
+    cloudflared     cloudflared  deployment  cloudflared
+    traefik         kube-system  deployment  traefik
+    monitoring      monitoring   statefulset prometheus-kube-prometheus-stack-prometheus
+    "
+    NODE=k3s-learn
+    OUT=/tmp/status.json
+
+    reading() {
+      jq -c '
+        (.spec.replicas // 0) as $desired
+        | (.status.readyReplicas // 0) as $ready
+        | (.status.updatedReplicas // 0) as $updated
+        | ((.status.observedGeneration // 0) < (.metadata.generation // 0)) as $stale
+        | {
+            desired: $desired,
+            ready: $ready,
+            state: (if $desired == 0 then "switched-out"
+                    elif $stale or $updated < $desired then "deploying"
+                    elif $ready < $desired then "down"
+                    else "running" end),
+            last_rollout: (.spec.template.metadata.annotations["kubectl.kubernetes.io/restartedAt"]
+                           // ([.status.conditions[]? | select(.type == "Progressing") | .lastUpdateTime][0])
+                           // .metadata.creationTimestamp)
+          }'
+    }
+
+    echo "$STATIONS" | while read -r id ns kind name; do
+      [ -n "$id" ] || continue
+      if json=$(kubectl -n "$ns" get "$kind" "$name" -o json 2>/dev/null); then
+        r=$(printf '%s' "$json" | reading)
+      else
+        r='{"state":"nodata"}'
+      fi
+      printf '%s\t%s\n' "$id" "$r"
+    done > /tmp/readings.tsv
+
+    node_json=$(kubectl get node "$NODE" -o json 2>/dev/null || echo '{}')
+
+    jq -n \
+      --rawfile readings /tmp/readings.tsv \
+      --argjson node "$node_json" \
+      '{
+         generated_at: (now | todate),
+         node: {
+           ready: ([$node.status.conditions[]? | select(.type == "Ready") | .status][0] == "True"),
+           version: ($node.status.nodeInfo.kubeletVersion // null)
+         },
+         stations: ($readings | split("\n") | map(select(length > 0) | split("\t") | {key: .[0], value: (.[1] | fromjson)}) | from_entries)
+       }' > "$OUT"
+
+    kubectl -n portfolio create configmap portfolio-status --from-file=status.json="$OUT" --dry-run=client -o yaml \
+      | kubectl -n portfolio replace -f -
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: portfolio-status
+  namespace: portfolio
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 50
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 50
+      backoffLimit: 0
+      ttlSecondsAfterFinished: 300
+      template:
+        spec:
+          serviceAccountName: portfolio-status
+          automountServiceAccountToken: true
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            seccompProfile: { type: RuntimeDefault }
+          containers:
+            - name: collect
+              image: alpine/k8s:1.35.4
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "/scripts/collect-status.sh"]
+              env:
+                - { name: HOME, value: /tmp }
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: { drop: ["ALL"] }
+              resources:
+                requests: { cpu: 20m, memory: 32Mi }
+                limits: { memory: 128Mi }
+              volumeMounts:
+                - { name: script, mountPath: /scripts, readOnly: true }
+                - { name: tmp, mountPath: /tmp }
+          volumes:
+            - name: script
+              configMap: { name: portfolio-status-script }
+            - name: tmp
+              emptyDir: { sizeLimit: 8Mi }

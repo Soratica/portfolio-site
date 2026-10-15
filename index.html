@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tim Lam — Cloud, Infrastructure &amp; Systems Administration</title>
+<meta name="description" content="Tim Lam builds and runs his own platform: Proxmox, LXC, k3s, Cloudflare Tunnels and an automated deploy pipeline. This site is a live control panel for it.">
+<meta property="og:title" content="Tim Lam — Cloud, Infrastructure & Systems Administration">
+<meta property="og:description" content="A live control panel for the homelab platform I built and run: Proxmox, LXC, k3s, Cloudflare Tunnels, automated deploys.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://portfolio.timbacloudpanel.org/">
+<meta name="theme-color" content="#c3ccbd">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/sofia-sans-extra-condensed.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/panel.css">
+<script src="/assets/panel.js" defer></script>
+</head>
+<body data-page="home">
+<a class="skip" href="#main">Skip to content</a>
+
+<main id="main">
+<section class="panel wrap" aria-labelledby="who">
+  <div class="panel-head">
+    <div>
+      <h1 id="who" class="plate title-plate">Tim Lam</h1>
+      <p class="plate role-plate">Cloud · Infrastructure · Systems Administration</p>
+    </div>
+    <div class="notice">
+      <p>This panel is wired to the homelab I built and run. Every lamp is a live reading, including the route your request just took to reach this page.</p>
+      <p class="feed" data-feed><span class="lamp" data-feed-lamp></span><span data-feed-text>Readings: connecting…</span></p>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <svg viewBox="0 0 1200 604" role="group" aria-label="Panel diagram of the homelab platform">
+      <defs>
+        <filter id="glow-white" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3.2" result="b"/><feFlood flood-color="#fff2c2" flood-opacity="0.9"/><feComposite in2="b" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="glow-amber" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3.2" result="b"/><feFlood flood-color="#f4a21f" flood-opacity="0.8"/><feComposite in2="b" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="glow-red" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3.2" result="b"/><feFlood flood-color="#e23d2b" flood-opacity="0.8"/><feComposite in2="b" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="d-arrow"/></marker>
+      </defs>
+
+      <!-- containers -->
+      <rect class="d-cubicle" x="30" y="170" width="260" height="340" rx="4"/>
+      <rect class="d-cubicle" x="320" y="170" width="850" height="340" rx="4"/>
+      <text class="d-cubicle-label" x="46" y="476">LXC 100</text>
+      <text class="d-cubicle-label" x="46" y="495">DOCKER-CT</text>
+      <g data-stn="docker-ct" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="140" cy="485" r="7"/></g>
+      <text class="d-cubicle-label" x="1130" y="196" text-anchor="end">LXC 102 · K3S-LEARN</text>
+      <text class="d-label d-label--dim" x="1130" y="214" text-anchor="end">single-node k3s cluster</text>
+      <g data-stn="k3s-learn" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="1150" cy="191" r="7"/></g>
+
+      <!-- host bus -->
+      <rect class="d-bus" x="30" y="553" width="1140" height="14"/>
+      <path class="d-track" d="M265 510 V553"/>
+      <path class="d-track" d="M1060 510 V553"/>
+
+      <!-- tracks: ingress -->
+      <path class="d-track" d="M390 64 H450"/>
+      <path class="d-track" d="M530 82 V214"/>
+      <path class="d-track" d="M610 232 H695"/>
+      <path class="d-track" d="M760 250 V330"/>
+      <path class="d-track" d="M420 330 H1090"/>
+      <path class="d-track" d="M420 330 V392 M590 330 V392 M760 330 V392 M930 330 V392 M1090 330 V392"/>
+      <text class="d-label" x="542" y="128">TUNNEL</text>
+      <text class="d-label d-label--dim" x="542" y="144">outbound-only, no open ports</text>
+
+      <!-- tracks: deploy line -->
+      <path class="d-feed" d="M160 82 V312" marker-end="url(#arrow)"/>
+      <text class="d-label d-label--dim" x="172" y="130">git fetch</text>
+      <path class="d-feed" d="M110 543 V348" marker-end="url(#arrow)"/>
+      <path class="d-deploy" d="M245 330 H305 V470 H824"/>
+      <path class="d-deploy" d="M484 470 V432 M654 470 V432 M824 470 V432" marker-end="url(#arrow)"/>
+      <text class="d-label d-label--dim" x="335" y="494">image streamed in · ctr import · rollout restart</text>
+
+      <!-- route lights (filled by script) -->
+      <g id="route-lights" aria-hidden="true"></g>
+
+      <!-- outside -->
+      <g aria-hidden="true">
+        <rect class="d-plate" x="270" y="46" width="120" height="36" rx="3"/>
+        <text class="d-plate-text" x="330" y="65" text-anchor="middle" dominant-baseline="central">YOU</text>
+      </g>
+      <g data-stn="visitor" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="250" cy="64" r="9"/></g>
+      <g aria-hidden="true">
+        <rect class="d-plate" x="450" y="46" width="160" height="36" rx="3"/>
+        <text class="d-plate-text" x="530" y="65" text-anchor="middle" dominant-baseline="central">CLOUDFLARE EDGE</text>
+      </g>
+      <g data-stn="edge" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="630" cy="64" r="9"/></g>
+      <text class="d-label d-label--dim" x="648" y="69" data-edge-label>edge location —</text>
+      <g aria-hidden="true">
+        <rect class="d-plate" x="70" y="46" width="180" height="36" rx="3"/>
+        <text class="d-plate-text" x="160" y="65" text-anchor="middle" dominant-baseline="central">GITHUB · SORATICA</text>
+      </g>
+
+      <!-- docker-ct -->
+      <g data-stn="build" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="160" cy="290" r="9"/></g>
+      <g aria-hidden="true">
+        <rect class="d-plate" x="75" y="312" width="170" height="36" rx="3"/>
+        <text class="d-plate-text" x="160" y="331" text-anchor="middle" dominant-baseline="central">IMAGE BUILD</text>
+      </g>
+      <text class="d-label d-label--dim" x="128" y="372">docker build</text>
+
+      <!-- k3s: ingress -->
+      <g data-stn="cloudflared" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="530" cy="194" r="9"/></g>
+      <g aria-hidden="true">
+        <rect class="d-plate" x="450" y="214" width="160" height="36" rx="3"/>
+        <text class="d-plate-text" x="530" y="233" text-anchor="middle" dominant-baseline="central">CLOUDFLARED</text>
+      </g>
+      <g data-stn="traefik" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="652" cy="232" r="9"/></g>
+      <g aria-hidden="true">
+        <rect class="d-plate" x="695" y="214" width="130" height="36" rx="3"/>
+        <text class="d-plate-text" x="760" y="233" text-anchor="middle" dominant-baseline="central">TRAEFIK</text>
+      </g>
+      <text class="d-label d-label--dim" x="840" y="237">ingress controller</text>
+
+      <!-- k3s: stations -->
+      <g data-stn="portfolio" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="420" cy="366" r="9"/></g>
+      <a class="stn" href="#readings" data-stn-link="portfolio" data-x="420" aria-label="Portfolio station, this site: no reading yet">
+        <rect class="d-plate" x="350" y="392" width="140" height="36" rx="3"/>
+        <text class="d-plate-text" x="420" y="411" text-anchor="middle" dominant-baseline="central">PORTFOLIO</text>
+      </a>
+      <text class="d-label" x="358" y="450" data-reading="portfolio">you are here</text>
+
+      <g data-stn="gymhero" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="590" cy="366" r="9"/></g>
+      <a class="stn" href="/projects/gymhero.html" data-stn-link="gymhero" data-x="590" aria-label="Gym Hero station: no reading yet">
+        <rect class="d-plate" x="520" y="392" width="140" height="36" rx="3"/>
+        <text class="d-plate-text" x="590" y="411" text-anchor="middle" dominant-baseline="central">GYM HERO</text>
+      </a>
+      <text class="d-label" x="528" y="450" data-reading="gymhero">—</text>
+      <text class="d-label d-label--dim" x="612" y="450">DB</text>
+      <g data-stn="gymhero-db" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="638" cy="446" r="5.5"/></g>
+
+      <g data-stn="music" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="760" cy="366" r="9"/></g>
+      <a class="stn" href="/projects/music.html" data-stn-link="music" data-x="760" aria-label="Music Shuffler station: no reading yet">
+        <rect class="d-plate" x="690" y="392" width="140" height="36" rx="3"/>
+        <text class="d-plate-text" x="760" y="411" text-anchor="middle" dominant-baseline="central">MUSIC</text>
+      </a>
+      <text class="d-label" x="698" y="450" data-reading="music">—</text>
+
+      <g data-stn="job-planner" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="930" cy="366" r="9"/></g>
+      <a class="stn" href="/projects/job-planner.html" data-stn-link="job-planner" data-x="930" aria-label="Job Planner station: no reading yet">
+        <rect class="d-plate" x="860" y="392" width="140" height="36" rx="3"/>
+        <text class="d-plate-text" x="930" y="411" text-anchor="middle" dominant-baseline="central">JOB PLANNER</text>
+      </a>
+      <text class="d-label" x="868" y="450" data-reading="job-planner">—</text>
+      <text class="d-label d-label--dim" x="950" y="450">API</text>
+      <g data-stn="job-planner-api" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="982" cy="446" r="5.5"/></g>
+
+      <g data-stn="monitoring" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="1090" cy="366" r="9"/></g>
+      <a class="stn" href="/homelab.html#capacity" data-stn-link="monitoring" data-x="1090" aria-label="Monitoring station: no reading yet">
+        <rect class="d-plate" x="1020" y="392" width="140" height="36" rx="3"/>
+        <text class="d-plate-text" x="1090" y="411" text-anchor="middle" dominant-baseline="central">MONITORING</text>
+      </a>
+      <text class="d-label" x="1028" y="450" data-reading="monitoring">—</text>
+
+      <!-- host layer -->
+      <g data-stn="watcher" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="110" cy="528" r="8"/></g>
+      <a class="stn" href="/homelab.html#deploy-line" aria-label="Deploy watcher: read how the deploy line works">
+        <rect class="d-plate" x="75" y="542" width="170" height="36" rx="3"/>
+        <text class="d-plate-text" x="160" y="561" text-anchor="middle" dominant-baseline="central">DEPLOY WATCHER</text>
+      </a>
+      <text class="d-label d-label--dim" x="75" y="598">systemd timer · every 5 min</text>
+      <g data-stn="host" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="470" cy="560" r="9"/></g>
+      <a class="stn" href="/homelab.html#host" aria-label="Proxmox VE host: read about the host layer">
+        <rect class="d-plate" x="495" y="542" width="290" height="36" rx="3"/>
+        <text class="d-plate-text" x="640" y="561" text-anchor="middle" dominant-baseline="central">PROXMOX VE HOST · PVE</text>
+      </a>
+      <text class="d-label d-label--dim" x="495" y="598">bare-metal hypervisor · LXC containers</text>
+    </svg>
+  </div>
+
+  <ol class="line" aria-label="Platform, top to bottom">
+    <li class="group" aria-hidden="true">Your route in</li>
+    <li data-stn="visitor" data-state="nodata"><span class="lamp"></span><span class="plate plate--bare">Your browser</span></li>
+    <li data-stn="edge" data-state="nodata"><span class="lamp"></span><span class="plate plate--bare">Cloudflare edge</span><span class="sub" data-edge-label>edge location —</span></li>
+    <li data-stn="cloudflared" data-state="nodata"><span class="lamp"></span><span class="plate plate--bare">Tunnel · cloudflared</span><span class="sub">outbound-only, no open ports</span></li>
+    <li data-stn="traefik" data-state="nodata"><span class="lamp"></span><span class="plate plate--bare">Traefik ingress</span></li>
+    <li class="group" aria-hidden="true">Stations on k3s-learn</li>
+    <li data-stn="portfolio" data-state="nodata"><span class="lamp"></span><a href="#readings"><span class="plate plate--bare">Portfolio</span></a><span class="sub" data-reading="portfolio">you are here</span></li>
+    <li data-stn="gymhero" data-state="nodata"><span class="lamp"></span><a href="/projects/gymhero.html"><span class="plate plate--bare">Gym Hero</span></a><span class="sub" data-reading="gymhero">—</span></li>
+    <li data-stn="music" data-state="nodata"><span class="lamp"></span><a href="/projects/music.html"><span class="plate plate--bare">Music Shuffler</span></a><span class="sub" data-reading="music">—</span></li>
+    <li data-stn="job-planner" data-state="nodata"><span class="lamp"></span><a href="/projects/job-planner.html"><span class="plate plate--bare">Job Planner</span></a><span class="sub" data-reading="job-planner">—</span></li>
+    <li data-stn="monitoring" data-state="nodata"><span class="lamp"></span><a href="/homelab.html#capacity"><span class="plate plate--bare">Monitoring</span></a><span class="sub" data-reading="monitoring">—</span></li>
+    <li class="group" aria-hidden="true">Deploy line and host</li>
+    <li data-stn="watcher" data-state="nodata"><span class="lamp"></span><a href="/homelab.html#deploy-line"><span class="plate plate--bare">Deploy watcher</span></a><span class="sub">GitHub → build → import → rollout</span></li>
+    <li data-stn="docker-ct" data-state="nodata"><span class="lamp"></span><span class="plate plate--bare">LXC 100 · docker-ct</span><span class="sub">image builds</span></li>
+    <li data-stn="k3s-learn" data-state="nodata"><span class="lamp"></span><span class="plate plate--bare">LXC 102 · k3s-learn</span><span class="sub">single-node k3s</span></li>
+    <li data-stn="host" data-state="nodata"><span class="lamp"></span><a href="/homelab.html#host"><span class="plate plate--bare">Proxmox VE host</span></a></li>
+  </ol>
+
+  <div class="desk">
+    <ul class="key" aria-label="Lamp key">
+      <li><span class="lamp" data-state="running"></span>Running</li>
+      <li><span class="lamp" data-state="deploying"></span>Deploying</li>
+      <li><span class="lamp" data-state="down"></span>Fault</li>
+      <li><span class="lamp off"></span>Switched out or no reading</li>
+    </ul>
+    <ul class="buttons" aria-label="Contact">
+      <!-- Fill href and remove `hidden` once the asset/link exists. -->
+      <li hidden><a class="push push--primary" href="/assets/tim-lam-resume.pdf" hidden><span class="cap"></span><span class="plate">Resume</span></a></li>
+      <li hidden><a class="push" href="mailto:" hidden><span class="cap"></span><span class="plate">Email</span></a></li>
+      <li hidden><a class="push" href="https://www.linkedin.com/in/" hidden><span class="cap"></span><span class="plate">LinkedIn</span></a></li>
+      <li><a class="push push--primary" href="/homelab.html"><span class="cap"></span><span class="plate">Working notes</span></a></li>
+      <li><a class="push" href="https://github.com/Soratica"><span class="cap"></span><span class="plate">GitHub</span></a></li>
+    </ul>
+  </div>
+</section>
+
+<section id="readings" class="band" aria-labelledby="readings-h">
+  <div class="wrap two-up">
+    <div>
+      <h2 id="readings-h" class="plate section-plate">Readings</h2>
+      <p class="section-sub">Live from the cluster and the host. Refreshed every minute; nothing here is typed in by hand.</p>
+      <table class="readings">
+        <caption class="sr-only">Current indication for every station on the panel</caption>
+        <thead>
+          <tr><th scope="col">Station</th><th scope="col">Indication</th><th scope="col">Ready</th><th scope="col" class="hide-sm">Last rollout</th></tr>
+        </thead>
+        <tbody data-readings-body>
+          <tr data-stn="portfolio" data-state="nodata"><th scope="row">Portfolio</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="gymhero" data-state="nodata"><th scope="row">Gym Hero</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="gymhero-db" data-state="nodata"><th scope="row">Gym Hero · MongoDB rs0</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="music" data-state="nodata"><th scope="row">Music Shuffler</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="job-planner" data-state="nodata"><th scope="row">Job Planner</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="job-planner-api" data-state="nodata"><th scope="row">Job Planner · API</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="cloudflared" data-state="nodata"><th scope="row">cloudflared tunnel</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="traefik" data-state="nodata"><th scope="row">Traefik ingress</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="monitoring" data-state="nodata"><th scope="row">Prometheus · Grafana</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="k3s-learn" data-state="nodata"><th scope="row">k3s node</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="docker-ct" data-state="nodata"><th scope="row">LXC 100 · docker-ct</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="host" data-state="nodata"><th scope="row">Proxmox VE host</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="watcher" data-state="nodata"><th scope="row">Deploy watcher</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h2 class="plate section-plate">Register</h2>
+      <p class="section-sub">Every deploy the watcher has made since the register was fitted, newest first.</p>
+      <ol class="register" data-register>
+        <li><span class="empty">Waiting for the register…</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="stations-h">
+  <div class="wrap">
+    <h2 id="stations-h" class="plate section-plate">Stations</h2>
+    <p class="section-sub">The apps running on the panel. Each one is built, shipped and operated on the platform above.</p>
+    <ul class="schedule">
+      <li data-stn="gymhero" data-state="nodata">
+        <h3><span class="lamp"></span><a href="/projects/gymhero.html">Gym Hero</a></h3>
+        <div>
+          <p>An RPG-themed workout tracker. Logging a real workout levels up a character, with every submission handled as one all-or-nothing transaction.</p>
+          <p class="facts">Next.js · TypeScript · MongoDB replica set · auto-deployed on commit</p>
+        </div>
+        <a class="go" href="/projects/gymhero.html">Station notes →</a>
+      </li>
+      <li data-stn="music" data-state="nodata">
+        <h3><span class="lamp"></span><a href="/projects/music.html">Music Shuffler</a></h3>
+        <div>
+          <p>Pulls a random track from a curated YouTube playlist and shows it off with a shuffle animation.</p>
+          <p class="facts">Flask · gunicorn · YouTube Data API · API key in a Kubernetes Secret · auto-deployed on commit</p>
+        </div>
+        <a class="go" href="/projects/music.html">Station notes →</a>
+      </li>
+      <li data-stn="job-planner" data-state="nodata">
+        <h3><span class="lamp"></span><a href="/projects/job-planner.html">Job Planner</a></h3>
+        <div>
+          <p>Compares job offers and relocation costs: salary to take-home, rent planning, neighborhood and commute comparisons.</p>
+          <p class="facts">Vanilla JS front end · small Express sync API · two deployments, one namespace</p>
+        </div>
+        <a class="go" href="/projects/job-planner.html">Station notes →</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="notes-h">
+  <div class="wrap notes-teaser">
+    <h2 id="notes-h">How the panel is wired</h2>
+    <div>
+      <p class="section-sub">The working notes cover how the platform is built and why, including the trade-offs I'd revisit:</p>
+      <ol>
+        <li>The host layer: Proxmox VE and unprivileged LXC containers</li>
+        <li>A single-node k3s cluster with no registry</li>
+        <li>Getting traffic in through Cloudflare Tunnels instead of open ports</li>
+        <li>The deploy line: a systemd timer that builds and rolls out on every commit</li>
+        <li>This panel's live status feed, and how it's kept read-only</li>
+      </ol>
+      <a class="push push--primary" href="/homelab.html"><span class="cap"></span><span class="plate">Read the working notes</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="band band--cabinet" aria-labelledby="close-h">
+  <div class="wrap close">
+    <div>
+      <h2 id="close-h">Hiring for cloud, infrastructure or sysadmin?</h2>
+      <p>I'm looking for cloud, infrastructure and systems administration roles. I'd be glad to walk you through any part of this panel.</p>
+    </div>
+    <ul class="buttons" aria-label="Contact">
+      <li hidden><a class="push push--primary" href="/assets/tim-lam-resume.pdf" hidden><span class="cap"></span><span class="plate">Resume</span></a></li>
+      <li hidden><a class="push" href="mailto:" hidden><span class="cap"></span><span class="plate">Email</span></a></li>
+      <li hidden><a class="push" href="https://www.linkedin.com/in/" hidden><span class="cap"></span><span class="plate">LinkedIn</span></a></li>
+      <li><a class="push push--primary" href="https://github.com/Soratica"><span class="cap"></span><span class="plate">GitHub</span></a></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Served to you by pod <strong data-pod>—</strong> on k3s-learn</span>
+    <span>Built and run by Tim Lam · <a href="https://github.com/Soratica/portfolio-site">Source</a></span>
+  </div>
+</footer>
+</body>
+</html>

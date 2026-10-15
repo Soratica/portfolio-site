@@ -11,8 +11,8 @@
 <meta property="og:url" content="https://portfolio.timbacloudpanel.org/projects/music.html">
 <meta name="theme-color" content="#c3ccbd">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/panel.css?v=a9250597">
-<script src="/assets/panel.js?v=a9250597" defer></script>
+<link rel="stylesheet" href="/assets/panel.css?v=7864b7ee">
+<script src="/assets/panel.js?v=7864b7ee" defer></script>
 </head>
 <body data-page="station">
 <a class="skip" href="#main">Skip to content</a>
@@ -27,14 +27,25 @@
 </header>
 
 <main id="main">
-<div class="wrap page-head" data-stn="music" data-state="nodata">
-  <p class="status-line"><span class="lamp"></span><span>Station Music Shuffler: <span data-ind>No reading</span> · <span data-ready>—</span> ready</span></p>
-  <h1>Music Shuffler</h1>
-  <p class="lede">A small Flask app that pulls a random track from a curated YouTube playlist and shows it with a shuffle animation: a quick way to find something new to listen to.</p>
-  <ul class="buttons" aria-label="Open Music Shuffler">
-    <li><a class="push push--primary" href="https://music.timbacloudpanel.org"><span class="cap"></span><span class="plate">Live demo</span></a></li>
-    <li><a class="push" href="https://github.com/Soratica/pythonyoutubeapp"><span class="cap"></span><span class="plate">Source</span></a></li>
-  </ul>
+<div class="wrap station-head">
+  <div>
+    <div class="title-row" data-stn="music" data-state="nodata"><span class="lamp" aria-hidden="true"></span><h1 class="plate station-plate">Music Shuffler</h1></div>
+    <p class="status-line" data-stn="music" data-state="nodata"><span>Live: <span data-ind>No reading</span> · <span data-ready>—</span> ready · last rollout <span data-rollout>—</span></span></p>
+    <p class="lede">A small Flask app that pulls a random track from a curated YouTube playlist and shows it with a shuffle animation: a quick way to find something new to listen to.</p>
+    <ul class="buttons" aria-label="Open Music Shuffler">
+      <li><a class="push push--primary" href="https://music.timbacloudpanel.org"><span class="cap"></span><span class="plate">Live demo</span></a></li>
+      <li><a class="push" href="https://github.com/Soratica/pythonyoutubeapp"><span class="cap"></span><span class="plate">Source</span></a></li>
+    </ul>
+  </div>
+  <aside aria-label="Route to this station">
+    <span class="plate plate--bare">Route to this station</span>
+    <ol class="track-list">
+      <li data-stn="edge" data-state="nodata"><span class="lamp"></span><b>Cloudflare edge</b><span class="sub" data-edge-label>edge location —</span></li>
+      <li data-stn="cloudflared" data-state="nodata"><span class="lamp"></span><b>Tunnel · cloudflared</b><span class="sub">outbound-only</span></li>
+      <li data-stn="traefik" data-state="nodata"><span class="lamp"></span><b>Traefik ingress</b><span class="sub">music.timbacloudpanel.org</span></li>
+      <li data-stn="music" data-state="nodata"><span class="lamp"></span><b>ns/music · app</b><span class="sub" data-reading="music">—</span></li>
+    </ol>
+  </aside>
 </div>
 
 <div class="wrap station-body">
@@ -53,15 +64,10 @@
     </ol>
     <p class="path-note">Auto-deployed: a commit to <code>master</code> is live within about five minutes, and shows up in the panel's register.</p>
   </article>
-  <aside class="station-side" aria-label="Live readings">
-    <span class="plate plate--bare">Readings</span>
-    <dl class="readings-mini" data-stn="music" data-state="nodata">
-      <div><dt>Indication</dt><dd><span data-ind>No reading</span></dd></div>
-      <div><dt>Ready</dt><dd data-ready>—</dd></div>
-      <div><dt>Last rollout</dt><dd data-rollout>—</dd></div>
-      <div><dt>Namespace</dt><dd>music</dd></div>
-    </dl>
+  <aside class="station-side" aria-label="Station facts">
+    <span class="plate plate--bare">Station facts</span>
     <dl class="facts-grid">
+      <div><dt>Namespace</dt><dd>music</dd></div>
       <div><dt>Runtime</dt><dd>Python, gunicorn</dd></div>
       <div><dt>External API</dt><dd>YouTube Data API v3</dd></div>
       <div><dt>Secrets</dt><dd>Kubernetes Secret, env vars</dd></div>

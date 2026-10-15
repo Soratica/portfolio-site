@@ -122,7 +122,7 @@
         }
       }
       for (const el of $$(`[data-reading="${id}"]`)) {
-        if (id === "portfolio") { el.textContent = r.state === "nodata" ? "you are here" : `${r.ready} · you are here`; continue; }
+        if (id === "portfolio") { el.textContent = r.state === "nodata" ? "this page" : `${r.ready} · this page`; continue; }
         el.textContent = r.state === "switched-out" ? "switched out" : r.state === "nodata" ? "no reading" : `${r.ready} ${r.state === "running" ? "ready" : STATE_TEXT[r.state].toLowerCase()}`;
       }
       for (const a of $$(`[data-stn-link="${id}"]`)) {
@@ -147,18 +147,41 @@
   }
 
   // ---- register ----
-  function renderRegister(reg) {
+  const APP_NAMES = { portfolio: "Portfolio", gymhero: "Gym Hero", "gymhero-db": "Gym Hero · MongoDB", music: "Music Shuffler", "job-planner": "Job Planner", "job-planner-api": "Job Planner · API", cloudflared: "cloudflared", traefik: "Traefik", monitoring: "Monitoring" };
+
+  function renderRegister(reg, status) {
     const list = document.querySelector("[data-register]");
     if (!list) return;
     list.replaceChildren();
-    const entries = reg && Array.isArray(reg.entries) ? reg.entries : null;
-    if (!entries || entries.length === 0) {
-      const li = document.createElement("li");
+    const entries = reg && Array.isArray(reg.entries) ? reg.entries : [];
+    if (entries.length === 0) {
+      // No watcher deploys logged yet: show the rollouts the cluster itself reports instead.
+      const rollouts = status && status.stations
+        ? Object.entries(status.stations).filter(([, s]) => s.last_rollout).sort((a, b) => Date.parse(b[1].last_rollout) - Date.parse(a[1].last_rollout)).slice(0, 6)
+        : [];
+      const note = document.createElement("li");
       const span = document.createElement("span");
-      span.className = "empty";
-      span.textContent = entries ? "No deploys recorded yet. The next commit to any watched repo will appear here." : "Register unavailable right now.";
-      li.append(span);
-      list.append(li);
+      span.className = rollouts.length ? "source-note" : "empty";
+      span.textContent = rollouts.length ? "No watcher deploys logged since the register was fitted. Latest rollouts reported by the cluster:" : "Register unavailable right now.";
+      note.append(span);
+      list.append(note);
+      for (const [id, s] of rollouts) {
+        const li = document.createElement("li");
+        const time = document.createElement("time");
+        time.dateTime = s.last_rollout;
+        time.title = new Date(s.last_rollout).toLocaleString();
+        time.textContent = ago(s.last_rollout);
+        const what = document.createElement("span");
+        what.className = "what";
+        const strong = document.createElement("strong");
+        strong.textContent = APP_NAMES[id] || id;
+        const subj = document.createElement("span");
+        subj.className = "subject";
+        subj.textContent = s.state === "switched-out" ? "rolled out, now switched out" : "rollout";
+        what.append(strong, subj);
+        li.append(time, what);
+        list.append(li);
+      }
       return;
     }
     for (const e of entries.slice(0, 12)) {
@@ -267,7 +290,7 @@
     apply(out);
     lastStatusAt = statusFresh ? status.generated_at : null;
     feedNotice(statusFresh);
-    renderRegister(reg);
+    renderRegister(reg, statusFresh ? status : null);
   }
 
   initRouteLights();

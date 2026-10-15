@@ -11,8 +11,8 @@
 <meta property="og:url" content="https://portfolio.timbacloudpanel.org/projects/gymhero.html">
 <meta name="theme-color" content="#c3ccbd">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/panel.css?v=a9250597">
-<script src="/assets/panel.js?v=a9250597" defer></script>
+<link rel="stylesheet" href="/assets/panel.css?v=7864b7ee">
+<script src="/assets/panel.js?v=7864b7ee" defer></script>
 </head>
 <body data-page="station">
 <a class="skip" href="#main">Skip to content</a>
@@ -27,14 +27,26 @@
 </header>
 
 <main id="main">
-<div class="wrap page-head" data-stn="gymhero" data-state="nodata">
-  <p class="status-line"><span class="lamp"></span><span>Station Gym Hero: <span data-ind>No reading</span> · <span data-ready>—</span> ready</span></p>
-  <h1>Gym Hero</h1>
-  <p class="lede">An RPG-themed workout tracker. Logging a real workout levels up a character across four stats, with quests, loot, streaks and personal records framed as boss battles.</p>
-  <ul class="buttons" aria-label="Open Gym Hero">
-    <li><a class="push push--primary" href="https://gymhero.timbacloudpanel.org"><span class="cap"></span><span class="plate">Live demo</span></a></li>
-    <li><a class="push" href="https://github.com/Soratica/Gym-Hero"><span class="cap"></span><span class="plate">Source</span></a></li>
-  </ul>
+<div class="wrap station-head">
+  <div>
+    <div class="title-row" data-stn="gymhero" data-state="nodata"><span class="lamp" aria-hidden="true"></span><h1 class="plate station-plate">Gym Hero</h1></div>
+    <p class="status-line" data-stn="gymhero" data-state="nodata"><span>Live: <span data-ind>No reading</span> · <span data-ready>—</span> ready · last rollout <span data-rollout>—</span></span></p>
+    <p class="lede">An RPG-themed workout tracker. Logging a real workout levels up a character across four stats, with quests, loot, streaks and personal records framed as boss battles.</p>
+    <ul class="buttons" aria-label="Open Gym Hero">
+      <li><a class="push push--primary" href="https://gymhero.timbacloudpanel.org"><span class="cap"></span><span class="plate">Live demo</span></a></li>
+      <li><a class="push" href="https://github.com/Soratica/Gym-Hero"><span class="cap"></span><span class="plate">Source</span></a></li>
+    </ul>
+  </div>
+  <aside aria-label="Route to this station">
+    <span class="plate plate--bare">Route to this station</span>
+    <ol class="track-list">
+      <li data-stn="edge" data-state="nodata"><span class="lamp"></span><b>Cloudflare edge</b><span class="sub" data-edge-label>edge location —</span></li>
+      <li data-stn="cloudflared" data-state="nodata"><span class="lamp"></span><b>Tunnel · cloudflared</b><span class="sub">outbound-only</span></li>
+      <li data-stn="traefik" data-state="nodata"><span class="lamp"></span><b>Traefik ingress</b><span class="sub">gymhero.timbacloudpanel.org</span></li>
+      <li data-stn="gymhero" data-state="nodata"><span class="lamp"></span><b>ns/gymhero · app</b><span class="sub" data-reading="gymhero">—</span></li>
+      <li data-stn="gymhero-db" data-state="nodata"><span class="lamp"></span><b>ns/gymhero · MongoDB</b><span class="sub" data-reading="gymhero-db">—</span></li>
+    </ol>
+  </aside>
 </div>
 
 <div class="wrap station-body">
@@ -55,15 +67,10 @@
     </ol>
     <p class="path-note">Auto-deployed: a commit to <code>main</code> is live within about five minutes, and shows up in the panel's register.</p>
   </article>
-  <aside class="station-side" aria-label="Live readings">
-    <span class="plate plate--bare">Readings</span>
-    <dl class="readings-mini" data-stn="gymhero" data-state="nodata">
-      <div><dt>Indication</dt><dd><span data-ind>No reading</span></dd></div>
-      <div><dt>Ready</dt><dd data-ready>—</dd></div>
-      <div><dt>Last rollout</dt><dd data-rollout>—</dd></div>
-      <div><dt>Namespace</dt><dd>gymhero</dd></div>
-    </dl>
+  <aside class="station-side" aria-label="Station facts">
+    <span class="plate plate--bare">Station facts</span>
     <dl class="facts-grid">
+      <div><dt>Namespace</dt><dd>gymhero</dd></div>
       <div><dt>Runtime</dt><dd>Next.js standalone build</dd></div>
       <div><dt>Data</dt><dd>MongoDB 7, replica set rs0</dd></div>
       <div><dt>Secrets</dt><dd>Kubernetes Secrets</dd></div>

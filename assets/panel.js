@@ -25,6 +25,7 @@
     gymhero: "Gym Hero station",
     music: "Music Shuffler station",
     "job-planner": "Job Planner station",
+    builtdiff: "Built Diff, off-site on Vercel",
     monitoring: "Monitoring station",
   };
 
@@ -74,8 +75,21 @@
 
     if (statusFresh) {
       for (const [id, s] of Object.entries(status.stations || {})) {
+        const state = s.state in STATE_TEXT ? s.state : "nodata";
+        if (Number.isFinite(s.http)) {
+          // Off-site station: an HTTP check, not replicas.
+          const code = s.http > 0 ? `HTTP ${s.http}` : "no response";
+          out[id] = {
+            state,
+            ready: s.http > 0 && Number.isFinite(s.ms) ? `${code} · ${s.ms} ms` : code,
+            rollout: null,
+            http: true,
+            readyTitle: s.checked_at,
+          };
+          continue;
+        }
         out[id] = {
-          state: s.state in STATE_TEXT ? s.state : "nodata",
+          state,
           ready: Number.isFinite(s.desired) ? `${s.ready ?? 0}/${s.desired}` : "—",
           rollout: s.last_rollout || null,
         };
@@ -122,6 +136,7 @@
         }
       }
       for (const el of $$(`[data-reading="${id}"]`)) {
+        if (r.http) { el.textContent = r.ready; continue; }
         if (id === "portfolio") { el.textContent = r.state === "nodata" ? "this page" : `${r.ready} · this page`; continue; }
         el.textContent = r.state === "switched-out" ? "switched out" : r.state === "nodata" ? "no reading" : `${r.ready} ${r.state === "running" ? "ready" : STATE_TEXT[r.state].toLowerCase()}`;
       }
@@ -147,7 +162,7 @@
   }
 
   // ---- register ----
-  const APP_NAMES = { portfolio: "Portfolio", gymhero: "Gym Hero", "gymhero-db": "Gym Hero · MongoDB", music: "Music Shuffler", "job-planner": "Job Planner", "job-planner-api": "Job Planner · API", cloudflared: "cloudflared", traefik: "Traefik", monitoring: "Monitoring" };
+  const APP_NAMES = { portfolio: "Portfolio", gymhero: "Gym Hero", "gymhero-db": "Gym Hero · MongoDB", music: "Music Shuffler", "job-planner": "Job Planner", "job-planner-api": "Job Planner · API", builtdiff: "Built Diff", cloudflared: "cloudflared", traefik: "Traefik", monitoring: "Monitoring" };
 
   function renderRegister(reg, status) {
     const list = document.querySelector("[data-register]");

@@ -11,9 +11,9 @@
 <meta property="og:url" content="https://portfolio.timbacloudpanel.org/homelab.html">
 <meta name="theme-color" content="#1c231f">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<script src="/assets/lighting.js?v=606fb4b2"></script>
-<link rel="stylesheet" href="/assets/panel.css?v=606fb4b2">
-<script src="/assets/panel.js?v=606fb4b2" defer></script>
+<script src="/assets/lighting.js?v=eb212f67"></script>
+<link rel="stylesheet" href="/assets/panel.css?v=eb212f67">
+<script src="/assets/panel.js?v=eb212f67" defer></script>
 </head>
 <body data-page="notes">
 <a class="skip" href="#main">Skip to content</a>
@@ -97,6 +97,7 @@
     <ul>
       <li>A <strong>CronJob</strong> runs every minute under its own ServiceAccount. Its permissions are read-only and scoped: <code>get</code> and <code>list</code> on Deployments and StatefulSets in the namespaces shown on the panel, <code>get</code> on nodes, and permission to update exactly one ConfigMap.</li>
       <li>It writes an <strong>allow-listed</strong> summary: per station, ready replicas, desired replicas, a derived state and the last rollout time. Anything not on the list never leaves the cluster.</li>
+      <li>One station lives off the platform: <strong>Built Diff</strong> runs on Vercel. The same CronJob makes a plain HTTPS request to it and records only the status code and response time. Any 2xx or 3xx shows as running.</li>
       <li>The deploy watcher publishes the host readings and the register the same way, into a second ConfigMap.</li>
       <li>Both ConfigMaps are mounted into this site's nginx pod as plain files under <code>/status/</code>. There's no new listener and no proxy, and the feed is served with <code>no-store</code> so readings are never cached.</li>
     </ul>

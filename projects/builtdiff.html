@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Built Diff — Tim Lam</title>
+<meta name="description" content="A build log and a track day log on one vehicle, drawn as one timeline, so a driver can see what they changed on the car and what it did to their lap times.">
+<meta property="og:title" content="Built Diff — Tim Lam">
+<meta property="og:description" content="A build log and a track day log on one vehicle, drawn as one timeline, so a driver can see what they changed on the car and what it did to their lap times.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://portfolio.timbacloudpanel.org/projects/builtdiff.html">
+<meta name="theme-color" content="#1c231f">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<script src="/assets/lighting.js?v=eb212f67"></script>
+<link rel="stylesheet" href="/assets/panel.css?v=eb212f67">
+<script src="/assets/panel.js?v=eb212f67" defer></script>
+</head>
+<body data-page="station">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="wrap topbar">
+  <a class="home-link" href="/"><span class="plate">Tim Lam</span></a>
+  <nav aria-label="Site">
+    <a class="nav-panel" href="/">Panel</a>
+    <a href="/homelab.html">Working notes</a>
+    <a href="https://github.com/Soratica">GitHub</a>
+    <button class="lighting" type="button" role="switch" aria-checked="true"><span class="lighting-track" aria-hidden="true"><span class="lighting-lever"></span></span><span class="lighting-text">Night lighting</span></button>
+  </nav>
+</header>
+
+<main id="main">
+<div class="wrap station-head">
+  <div>
+    <div class="title-row" data-stn="builtdiff" data-state="nodata"><span class="lamp" aria-hidden="true"></span><h1 class="plate station-plate">Built Diff</h1></div>
+    <p class="status-line" data-stn="builtdiff" data-state="nodata"><span>Live: <span data-ind>No reading</span> · <span data-ready>—</span> · checked every minute</span></p>
+    <p class="lede">A build log and a track day log on one vehicle, drawn as one timeline, so a driver can see what they changed on the car and what it did to their lap times.</p>
+    <ul class="buttons" aria-label="Open Built Diff">
+      <li><a class="push push--primary" href="https://builtdiffapp.com"><span class="cap"></span><span class="plate">Live site</span></a></li>
+    </ul>
+  </div>
+  <aside aria-label="How the panel watches this station">
+    <span class="plate plate--bare">How the panel watches it</span>
+    <ol class="track-list">
+      <li data-stn="k3s-learn" data-state="nodata"><span class="lamp"></span><b>k3s-learn · status CronJob</b><span class="sub">every minute</span></li>
+      <li data-stn="builtdiff" data-state="nodata"><span class="lamp"></span><b>HTTPS GET builtdiffapp.com</b><span class="sub" data-reading="builtdiff">—</span></li>
+    </ol>
+  </aside>
+</div>
+
+<div class="wrap station-body">
+  <article class="prose">
+    <h2>What it does</h2>
+    <p>Drivers who modify their own cars log two things: what they changed, and how the car ran at the track. Built Diff keeps both on the same vehicle and draws them on one timeline. Each session is compared with the last visit to that track and with the driver's best there, because a session can beat last time and still be well off a personal best.</p>
+    <p>Lap times go in the way people write them, <code>1:32.4</code> on a road course or <code>92.4</code> at an autocross, and are stored as seconds so best laps and deltas are plain arithmetic.</p>
+    <h2>Stack</h2>
+    <p>Next.js 16 with the App Router and TypeScript, MongoDB Atlas through Mongoose, Zod validation on every request body, Clerk for sign-in, and Cloudflare R2 for photos, uploaded straight from the browser with presigned URLs.</p>
+    <h2>Design choices</h2>
+    <p>Auth lives behind one function that every route and Server Action calls. Owner-only lookups return 404 rather than 403, so the API never confirms that someone else's vehicle exists. Best lap is derived on write and can't be set by a client. Public share links are permanent, because a link that changes is a broken link.</p>
+    <h2 id="operated">How it's deployed and operated</h2>
+    <ol class="path" aria-label="Deploy path">
+      <li><b>Commit</b>pushed to GitHub</li>
+      <li><b>Build</b>by Vercel</li>
+      <li><b>Deploy</b>by Vercel, serverless</li>
+    </ol>
+    <p class="path-note">This station isn't on my platform. It runs on Vercel with a managed database, and the panel watches it from the outside with a plain HTTP check.</p>
+  </article>
+  <aside class="station-side" aria-label="Station facts">
+    <span class="plate plate--bare">Station facts</span>
+    <dl class="facts-grid">
+      <div><dt>Hosting</dt><dd>Vercel</dd></div>
+      <div><dt>Framework</dt><dd>Next.js 16, TypeScript</dd></div>
+      <div><dt>Data</dt><dd>MongoDB Atlas</dd></div>
+      <div><dt>Auth</dt><dd>Clerk</dd></div>
+      <div><dt>Photos</dt><dd>Cloudflare R2</dd></div>
+      <div><dt>Source</dt><dd>Private repository</dd></div>
+    </dl>
+  </aside>
+</div>
+
+<section class="band band--cabinet" aria-labelledby="close-h">
+  <div class="wrap close">
+    <div>
+      <h2 id="close-h" class="plate close-plate">Hiring for cloud, infrastructure or sysadmin?</h2>
+      <p>I designed and built this app end to end. I'd be glad to walk you through it.</p>
+    </div>
+    <!--email_off--><ul class="buttons" aria-label="Contact">
+      <li><a class="push push--primary" href="/assets/tim-lam-resume.pdf?v=b38dd068" type="application/pdf"><span class="cap"></span><span class="plate">Resume</span></a></li>
+      <li><a class="push" href="mailto:timlam3535@gmail.com"><span class="cap"></span><span class="plate">Email</span></a></li>
+      <li><a class="push" href="https://www.linkedin.com/in/timothy-lam-44b377155/"><span class="cap"></span><span class="plate">LinkedIn</span></a></li>
+      <li><a class="push" href="/projects/gymhero.html"><span class="cap"></span><span class="plate">Next station</span></a></li>
+      <li><a class="push" href="https://github.com/Soratica"><span class="cap"></span><span class="plate">GitHub</span></a></li>
+    </ul><!--/email_off-->
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Served to you by pod <strong data-pod>—</strong> on k3s-learn</span>
+    <span>Built and run by Tim Lam · <a href="https://github.com/Soratica/portfolio-site">Source</a></span>
+  </div>
+</footer>
+</body>
+</html>

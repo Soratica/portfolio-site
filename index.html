@@ -12,9 +12,9 @@
 <meta name="theme-color" content="#1c231f">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/sofia-sans-extra-condensed.woff2" as="font" type="font/woff2" crossorigin>
-<script src="/assets/lighting.js?v=606fb4b2"></script>
-<link rel="stylesheet" href="/assets/panel.css?v=606fb4b2">
-<script src="/assets/panel.js?v=606fb4b2" defer></script>
+<script src="/assets/lighting.js?v=eb212f67"></script>
+<link rel="stylesheet" href="/assets/panel.css?v=eb212f67">
+<script src="/assets/panel.js?v=eb212f67" defer></script>
 </head>
 <body data-page="home">
 <a class="skip" href="#main">Skip to content</a>
@@ -94,6 +94,16 @@
         <rect class="d-plate" x="70" y="46" width="180" height="36" rx="3"/>
         <text class="d-plate-text" x="160" y="65" text-anchor="middle" dominant-baseline="central">GITHUB · SORATICA</text>
       </g>
+
+      <!-- off-site: not on the platform, watched by HTTP check -->
+      <rect class="d-cubicle d-cubicle--offsite" x="880" y="22" width="290" height="104" rx="4"/>
+      <text class="d-cubicle-label" x="1154" y="114" text-anchor="end">OFF-SITE · VERCEL</text>
+      <g data-stn="builtdiff" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="1088" cy="58" r="9"/></g>
+      <a class="stn" href="/projects/builtdiff.html" data-stn-link="builtdiff" aria-label="Built Diff, off-site on Vercel: no reading yet">
+        <rect class="d-plate" x="900" y="40" width="160" height="36" rx="3"/>
+        <text class="d-plate-text" x="980" y="59" text-anchor="middle" dominant-baseline="central">BUILT DIFF</text>
+      </a>
+      <text class="d-label" x="900" y="98" data-reading="builtdiff">—</text>
 
       <!-- docker-ct -->
       <g data-stn="build" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="160" cy="290" r="9"/></g>
@@ -184,6 +194,8 @@
     <li data-stn="music" data-state="nodata"><span class="lamp"></span><a href="/projects/music.html"><span class="plate plate--bare">Music Shuffler</span></a><span class="sub" data-reading="music">—</span></li>
     <li data-stn="job-planner" data-state="nodata"><span class="lamp"></span><a href="/projects/job-planner.html"><span class="plate plate--bare">Job Planner</span></a><span class="sub" data-reading="job-planner">—</span></li>
     <li data-stn="monitoring" data-state="nodata"><span class="lamp"></span><a href="/homelab.html#capacity"><span class="plate plate--bare">Monitoring</span></a><span class="sub" data-reading="monitoring">—</span></li>
+    <li class="group" aria-hidden="true">Off-site, watched by HTTP check</li>
+    <li data-stn="builtdiff" data-state="nodata"><span class="lamp"></span><a href="/projects/builtdiff.html"><span class="plate plate--bare">Built Diff</span></a><span class="sub" data-reading="builtdiff">—</span></li>
     <li class="group" aria-hidden="true">Deploy line and host</li>
     <li data-stn="watcher" data-state="nodata"><span class="lamp"></span><a href="/homelab.html#deploy-line"><span class="plate plate--bare">Deploy watcher</span></a><span class="sub">GitHub → build → import → rollout</span></li>
     <li data-stn="docker-ct" data-state="nodata"><span class="lamp"></span><span class="plate plate--bare">LXC 100 · docker-ct</span><span class="sub">image builds</span></li>
@@ -213,7 +225,7 @@
   <div class="wrap two-up">
     <div>
       <h2 id="readings-h" class="plate section-plate">Readings</h2>
-      <p class="section-sub">Live from the cluster and the host. Refreshed every minute; nothing here is typed in by hand.</p>
+      <p class="section-sub">Live from the cluster and the host, plus an HTTP check on the off-site app. Refreshed every minute; nothing here is typed in by hand.</p>
       <table class="readings">
         <caption class="sr-only">Current indication for every station on the panel</caption>
         <thead>
@@ -226,6 +238,7 @@
           <tr data-stn="music" data-state="nodata"><th scope="row">Music Shuffler</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
           <tr data-stn="job-planner" data-state="nodata"><th scope="row">Job Planner</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
           <tr data-stn="job-planner-api" data-state="nodata"><th scope="row">Job Planner · API</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
+          <tr data-stn="builtdiff" data-state="nodata"><th scope="row">Built Diff · Vercel</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
           <tr data-stn="cloudflared" data-state="nodata"><th scope="row">cloudflared tunnel</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
           <tr data-stn="traefik" data-state="nodata"><th scope="row">Traefik ingress</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
           <tr data-stn="monitoring" data-state="nodata"><th scope="row">Prometheus · Grafana</th><td class="ind"><span class="lamp"></span><span data-ind>No reading</span></td><td class="num" data-ready>—</td><td class="num hide-sm" data-rollout>—</td></tr>
@@ -249,7 +262,7 @@
 <section class="band" aria-labelledby="stations-h">
   <div class="wrap">
     <h2 id="stations-h" class="plate section-plate">Stations</h2>
-    <p class="section-sub">The apps running on the panel. Each one is built, shipped and operated on the platform above.</p>
+    <p class="section-sub">The apps on the panel. All but one are built, shipped and operated on the platform above; Built Diff runs on Vercel and the panel watches it from outside.</p>
     <ul class="schedule">
       <li data-stn="gymhero" data-state="nodata">
         <h3><span class="lamp"></span><a href="/projects/gymhero.html">Gym Hero</a></h3>
@@ -274,6 +287,14 @@
           <p class="facts">Vanilla JS front end · small Express sync API · two deployments, one namespace</p>
         </div>
         <a class="go" href="/projects/job-planner.html">Station notes →</a>
+      </li>
+      <li data-stn="builtdiff" data-state="nodata">
+        <h3><span class="lamp"></span><a href="/projects/builtdiff.html">Built Diff</a></h3>
+        <div>
+          <p>A build log and a track day log on one vehicle, drawn as one timeline, so a driver can see what they changed on the car and what it did to their lap times.</p>
+          <p class="facts">Next.js 16 · MongoDB Atlas · Clerk · Cloudflare R2 · hosted on Vercel, watched here by HTTP check</p>
+        </div>
+        <a class="go" href="/projects/builtdiff.html">Station notes →</a>
       </li>
     </ul>
   </div>

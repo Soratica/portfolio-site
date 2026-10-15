@@ -47,6 +47,25 @@ echo "$STATIONS" | while read -r id ns kind name; do
   printf '%s\t%s\n' "$id" "$r"
 done > /tmp/readings.tsv
 
+# Off-cluster stations: a plain HTTPS GET, nothing else. Records the status
+# code and response time only; any 2xx/3xx counts as running.
+PROBES="
+builtdiff https://builtdiffapp.com/
+"
+echo "$PROBES" | while read -r id url; do
+  [ -n "$id" ] || continue
+  out=$(curl -sS -o /dev/null -m 10 -w '%{http_code} %{time_total}' "$url" 2>/dev/null) || true
+  code=${out%% *}
+  secs=${out##* }
+  case "$code" in
+    2??|3??) state=running ;;
+    *) state=down; code=${code:-000} ;;
+  esac
+  r=$(jq -cn --arg s "$state" --arg c "$code" --arg t "${secs:-0}" \
+    '{state: $s, http: ($c | tonumber), ms: (($t | tonumber) * 1000 | round), checked_at: (now | todate)}')
+  printf '%s\t%s\n' "$id" "$r"
+done >> /tmp/readings.tsv
+
 node_json=$(kubectl get node "$NODE" -o json 2>/dev/null || echo '{}')
 
 jq -n \

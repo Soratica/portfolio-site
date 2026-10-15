@@ -326,6 +326,8 @@ a:hover { text-decoration-thickness: 2px; }
 
 /* svg paint */
 .d-cubicle { fill: var(--enamel-deep); stroke: var(--track); stroke-width: 2; }
+/* Off the platform: dashed, so it never reads as another container. */
+.d-cubicle--offsite { fill: none; stroke-dasharray: 7 6; }
 .d-track { fill: none; stroke: var(--track); stroke-width: 7; stroke-linecap: square; stroke-linejoin: miter; }
 .d-deploy { fill: none; stroke: var(--track); stroke-width: 3; stroke-dasharray: 10 6; }
 .d-feed { fill: none; stroke: var(--track); stroke-width: 3; }

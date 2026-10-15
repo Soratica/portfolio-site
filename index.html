@@ -9,11 +9,12 @@
 <meta property="og:description" content="A live control panel for the homelab platform I built and run: Proxmox, LXC, k3s, Cloudflare Tunnels, automated deploys.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://portfolio.timbacloudpanel.org/">
-<meta name="theme-color" content="#c3ccbd">
+<meta name="theme-color" content="#1c231f">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/sofia-sans-extra-condensed.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/panel.css?v=7864b7ee">
-<script src="/assets/panel.js?v=7864b7ee" defer></script>
+<script src="/assets/lighting.js?v=a2bc8cbc"></script>
+<link rel="stylesheet" href="/assets/panel.css?v=a2bc8cbc">
+<script src="/assets/panel.js?v=a2bc8cbc" defer></script>
 </head>
 <body data-page="home">
 <a class="skip" href="#main">Skip to content</a>
@@ -23,11 +24,13 @@
   <div class="panel-head">
     <div>
       <h1 id="who" class="plate title-plate">Tim Lam</h1>
-      <p class="plate role-plate">Cloud · Infrastructure · Systems Administration</p>
+      <div class="role-row"><p class="plate role-plate">Cloud · Infrastructure · Systems Administration</p><button class="lighting" type="button" role="switch" aria-checked="true" aria-label="Night lighting"><span class="lighting-track" aria-hidden="true"><span class="lighting-lever"></span></span><span class="lighting-text">Night lighting</span></button></div>
     </div>
-    <div class="notice">
-      <p>This panel is wired to the homelab I built and run. Every lamp is a live reading, including the route your request just took to reach this page.</p>
-      <p class="feed" data-feed><span class="lamp" data-feed-lamp></span><span data-feed-text>Readings: connecting…</span></p>
+    <div class="panel-aside">
+      <div class="notice">
+        <p>This panel is wired to the homelab I built and run. Every lamp is a live reading, including the route your request just took to reach this page.</p>
+        <p class="feed" data-feed><span class="lamp" data-feed-lamp></span><span data-feed-text>Readings: connecting…</span></p>
+      </div>
     </div>
   </div>
 

@@ -17,8 +17,6 @@
     const night = root.dataset.theme !== "light";
     for (const b of document.querySelectorAll(".lighting")) {
       b.setAttribute("aria-checked", String(night));
-      const t = b.querySelector(".lighting-text");
-      if (t) t.textContent = night ? "Night lighting" : "Day lighting";
     }
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = night ? COLORS.dark : COLORS.light;

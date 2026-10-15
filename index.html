@@ -12,8 +12,8 @@
 <meta name="theme-color" content="#c3ccbd">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/sofia-sans-extra-condensed.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/panel.css">
-<script src="/assets/panel.js" defer></script>
+<link rel="stylesheet" href="/assets/panel.css?v=a9250597">
+<script src="/assets/panel.js?v=a9250597" defer></script>
 </head>
 <body data-page="home">
 <a class="skip" href="#main">Skip to content</a>
@@ -34,7 +34,7 @@
   <div class="diagram">
     <svg viewBox="0 0 1200 604" role="group" aria-label="Panel diagram of the homelab platform">
       <defs>
-        <filter id="glow-white" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3.2" result="b"/><feFlood flood-color="#fff2c2" flood-opacity="0.9"/><feComposite in2="b" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="glow-white" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4.2" result="b"/><feFlood flood-color="#ffe08a" flood-opacity="1"/><feComposite in2="b" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="glow-amber" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3.2" result="b"/><feFlood flood-color="#f4a21f" flood-opacity="0.8"/><feComposite in2="b" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="glow-red" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3.2" result="b"/><feFlood flood-color="#e23d2b" flood-opacity="0.8"/><feComposite in2="b" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="d-arrow"/></marker>
@@ -43,9 +43,9 @@
       <!-- containers -->
       <rect class="d-cubicle" x="30" y="170" width="260" height="340" rx="4"/>
       <rect class="d-cubicle" x="320" y="170" width="850" height="340" rx="4"/>
-      <text class="d-cubicle-label" x="46" y="476">LXC 100</text>
+      <text class="d-cubicle-label" x="46" y="478">LXC 100</text>
       <text class="d-cubicle-label" x="46" y="495">DOCKER-CT</text>
-      <g data-stn="docker-ct" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="140" cy="485" r="7"/></g>
+      <g data-stn="docker-ct" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="180" cy="489" r="7"/></g>
       <text class="d-cubicle-label" x="1130" y="196" text-anchor="end">LXC 102 · K3S-LEARN</text>
       <text class="d-label d-label--dim" x="1130" y="214" text-anchor="end">single-node k3s cluster</text>
       <g data-stn="k3s-learn" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="1150" cy="191" r="7"/></g>
@@ -81,7 +81,6 @@
         <rect class="d-plate" x="270" y="46" width="120" height="36" rx="3"/>
         <text class="d-plate-text" x="330" y="65" text-anchor="middle" dominant-baseline="central">YOU</text>
       </g>
-      <g data-stn="visitor" data-state="nodata" aria-hidden="true"><circle class="d-lamp" cx="250" cy="64" r="9"/></g>
       <g aria-hidden="true">
         <rect class="d-plate" x="450" y="46" width="160" height="36" rx="3"/>
         <text class="d-plate-text" x="530" y="65" text-anchor="middle" dominant-baseline="central">CLOUDFLARE EDGE</text>
@@ -199,7 +198,7 @@
     <ul class="buttons" aria-label="Contact">
       <!-- Fill href and remove `hidden` once the asset/link exists. -->
       <li hidden><a class="push push--primary" href="/assets/tim-lam-resume.pdf" hidden><span class="cap"></span><span class="plate">Resume</span></a></li>
-      <li hidden><a class="push" href="mailto:" hidden><span class="cap"></span><span class="plate">Email</span></a></li>
+      <li hidden><a class="push" href="#contact-pending" hidden><span class="cap"></span><span class="plate">Email</span></a></li>
       <li hidden><a class="push" href="https://www.linkedin.com/in/" hidden><span class="cap"></span><span class="plate">LinkedIn</span></a></li>
       <li><a class="push push--primary" href="/homelab.html"><span class="cap"></span><span class="plate">Working notes</span></a></li>
       <li><a class="push" href="https://github.com/Soratica"><span class="cap"></span><span class="plate">GitHub</span></a></li>
@@ -302,7 +301,7 @@
     </div>
     <ul class="buttons" aria-label="Contact">
       <li hidden><a class="push push--primary" href="/assets/tim-lam-resume.pdf" hidden><span class="cap"></span><span class="plate">Resume</span></a></li>
-      <li hidden><a class="push" href="mailto:" hidden><span class="cap"></span><span class="plate">Email</span></a></li>
+      <li hidden><a class="push" href="#contact-pending" hidden><span class="cap"></span><span class="plate">Email</span></a></li>
       <li hidden><a class="push" href="https://www.linkedin.com/in/" hidden><span class="cap"></span><span class="plate">LinkedIn</span></a></li>
       <li><a class="push push--primary" href="https://github.com/Soratica"><span class="cap"></span><span class="plate">GitHub</span></a></li>
     </ul>
